@@ -1,0 +1,124 @@
+import { Mail, Lock, ArrowRight, User, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+export const Login2 = () => {
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+    return (
+        <div className="flex flex-col md:flex-row w-full max-w-4xl mx-auto items-center justify-center p-4 md:p-8">
+            {/* Left side - Illustration */}
+            <div className="w-full md:w-1/2 flex justify-center mb-8 md:mb-0">
+                <div className="relative">
+                    {/* Background circle */}
+                    <div className="w-56 h-56 bg-gray-100 rounded-full flex items-center justify-center">
+                        {/* Laptop/User icon */}
+                        <div className="w-32 h-32 bg-gray-700 rounded-md flex items-center justify-center">
+                            <User className="w-16 h-16 text-gray-300" strokeWidth={1.5} />
+                        </div>
+                    </div>
+                    {/* Decorative elements */}
+                    <div className="absolute top-0 left-1/2 -translate-x-20 -translate-y-4">
+                        <div className="w-3 h-3 border border-gray-300 rotate-45"></div>
+                    </div>
+                    <div className="absolute bottom-6 left-0 -translate-x-8">
+                        <div className="w-6 h-6 rounded-full border border-teal-400"></div>
+                    </div>
+                    <div className="absolute top-1/2 right-0 translate-x-6">
+                        <div className="w-4 h-4 rounded-full bg-teal-100"></div>
+                    </div>
+                    <div className="absolute right-1/4 top-0 -translate-y-6">
+                        <div className="w-6 h-6 text-green-400">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                            >
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div className="absolute bottom-0 right-1/4 translate-y-6">
+                        <div className="w-6 h-6 text-green-300 transform rotate-45">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                            >
+                                <path d="M12 5v14M5 12h14" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* Right side - Login form */}
+            <div className="w-full md:w-1/2 max-w-md">
+                <h1 className="text-2xl font-semibold text-gray-800 mb-8 text-center md:text-left">
+                    Member Login
+                </h1>
+                <form>
+                    <div className="space-y-4">
+                        {/* Email field */}
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Mail className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                type="email"
+                                placeholder="Email"
+                                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                            />
+                        </div>
+                        {/* Password field */}
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Lock className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                placeholder="Password"
+                                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                            />
+                            <button
+                                type="button"
+                                onClick={togglePasswordVisibility}
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                            >
+                                {showPassword ? (
+                                    <EyeOff className="h-5 w-5" />
+                                ) : (
+                                    <Eye className="h-5 w-5" />
+                                )}
+                            </button>
+                        </div>
+                        {/* Login button */}
+                        <button
+                            type="submit"
+                            className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                        >
+                            LOGIN
+                        </button>
+                        {/* Forgot password link */}
+                        <div className="text-center">
+                            <a href="#" className="text-sm text-gray-500 hover:text-gray-700">
+                                Forgot Username / Password?
+                            </a>
+                        </div>
+                    </div>
+                </form>
+                {/* Create account link */}
+                <div className="mt-12 text-right">
+                    <a
+                        href="#"
+                        className="inline-flex items-center text-sm text-gray-600 hover:text-gray-800"
+                    >
+                        Create your Account
+                        <ArrowRight className="ml-1 h-4 w-4" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    )
+}
