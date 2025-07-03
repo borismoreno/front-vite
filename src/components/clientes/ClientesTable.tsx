@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ICliente } from "../../types/cliente";
 import { AlertTriangle, MapPin, ChevronDown, ChevronLeft, ChevronRight, Edit, IdCardIcon, Mail, MoreHorizontal, Phone, PlusCircle, Search, Trash2, X } from "lucide-react";
 import { CreateClientForm } from "./CreateClienteForm";
-import { createCliente, updateCliente } from "../../api/clientes";
+import { createCliente, deleteCliente, updateCliente } from "../../api/clientes";
 import { toast } from 'react-toastify';
 
 interface ClientesTableProps {
@@ -75,31 +75,60 @@ export const ClientesTable = ({ clientes, onUpdate }: ClientesTableProps) => {
         setClientToDelete(null)
         setShowDeleteConfirmation(false)
     }
-    const confirmDeleteClient = () => {
-        console.log('confirmDeleteClient', clientToDelete);
+    const confirmDeleteClient = async () => {
+        if (!clientToDelete) {
+            toast.error('No se ha seleccionado un cliente para eliminar.');
+            return;
+        }
+        try {
+            const response = await deleteCliente(clientToDelete);
+            if (response.success) {
+                toast.success('Cliente eliminado correctamente.');
+                onUpdate();
+            } else {
+                if (response.message) toast.error(response.message);
+                else toast.error('Error al eliminar el cliente.')
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error('Error al eliminar el cliente.')
+        } finally {
+            setClientToDelete(null);
+            setShowDeleteConfirmation(false);
+        }
     }
 
     const handleCreateClientSubmit = async (clientData: ICliente) => {
         try {
             if (editingClient) {
                 // Update existing client
-                const responseUpdate = await updateCliente(clientData, editingClient._id!);
-                console.log('responseUpdate', responseUpdate);
+                const response = await updateCliente(clientData, editingClient._id!);
+                if (response.success) {
+                    toast.success(`Cliente actualizado correctamente`);
+                    onUpdate();
+                } else {
+                    if (response.message) toast.error(response.message);
+                    else toast.error('Error al actualizar el cliente.')
+                }
             } else {
                 // Create new client
-                const responseCreate = await createCliente(clientData);
-                console.log('responseCreate', responseCreate);
+                const response = await createCliente(clientData);
+                if (response.success) {
+                    toast.success(`Cliente guardado correctamente`);
+                    onUpdate();
+                } else {
+                    if (response.message) toast.error(response.message);
+                    else toast.error('Error al guardar el cliente.')
+                }
             }
         } catch (error) {
             console.log(error);
             toast.error(`Error al ${editingClient ? 'actualizar' : 'guardar'} el cliente. Por favor, inténtalo de nuevo.`);
-            return
+        } finally {
+            // Reset form state
+            setShowCreateClientForm(false)
+            setEditingClient(null)
         }
-        toast.success(`Cliente ${editingClient ? 'actualizado' : 'guardado'} correctamente`);
-        onUpdate();
-        // Reset form state
-        setShowCreateClientForm(false)
-        setEditingClient(null)
     }
     const handleEditClient = (client: ICliente, e: any) => {
         e.stopPropagation(); // Prevent event from bubbling up
@@ -134,7 +163,6 @@ export const ClientesTable = ({ clientes, onUpdate }: ClientesTableProps) => {
         return index >= currentClients.length - 2
     }
     const showDeleteConfirmationDialog = (clientId: string, e: React.MouseEvent) => {
-        console.log('showDeleteConfirmationDialog', clientId);
         e.stopPropagation(); // Prevent event from bubbling up
         setClientToDelete(clientId);
         setShowDeleteConfirmation(true);
@@ -195,24 +223,23 @@ export const ClientesTable = ({ clientes, onUpdate }: ClientesTableProps) => {
                         <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg">
                             <div className="flex items-center mb-4 text-amber-600">
                                 <AlertTriangle className="h-6 w-6 mr-2" />
-                                <h3 className="text-lg font-semibold">Confirm Deletion</h3>
+                                <h3 className="text-lg font-semibold">Confirmar</h3>
                             </div>
                             <p className="mb-6 text-gray-600">
-                                Are you sure you want to delete this customer? This action
-                                cannot be undone.
+                                ¿Está seguro de eliminar este cliente? Esta acción no se puede deshacer.
                             </p>
                             <div className="flex justify-end space-x-3">
                                 <button
                                     onClick={cancelDeleteClient}
                                     className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
                                 >
-                                    Cancel
+                                    Cancelar
                                 </button>
                                 <button
                                     onClick={confirmDeleteClient}
                                     className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
                                 >
-                                    Delete
+                                    Eliminar
                                 </button>
                             </div>
                         </div>
@@ -227,10 +254,10 @@ export const ClientesTable = ({ clientes, onUpdate }: ClientesTableProps) => {
                         <div className="w-full sm:w-auto">
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                                <input type="text" placeholder="Buscar cliente..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 pr-4 py-2 w-full sm:w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+                                <input type="text" placeholder="Buscar cliente..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 pr-4 py-2 w-full sm:w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm" />
                             </div>
                         </div>
-                        <button onClick={handleCreateClientClick} className="w-full sm:w-auto py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center">
+                        <button onClick={handleCreateClientClick} className="w-full sm:w-auto py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center">
                             <PlusCircle className="h-4 w-4 mr-2" />
                             Agregar Cliente
                         </button>
@@ -295,7 +322,7 @@ export const ClientesTable = ({ clientes, onUpdate }: ClientesTableProps) => {
                                                         <Edit className="h-4 w-4 mr-2 text-gray-500" />
                                                         Editar
                                                     </button>
-                                                    <button onClick={e => showDeleteConfirmationDialog(client.numeroIdentificacion, e)} className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                                    <button onClick={e => showDeleteConfirmationDialog(client._id!, e)} className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                                                         <Trash2 className="h-4 w-4 mr-2 text-red-500" />
                                                         Eliminar
                                                     </button>
@@ -348,7 +375,7 @@ export const ClientesTable = ({ clientes, onUpdate }: ClientesTableProps) => {
                                                     </button>
                                                     <button
                                                         onClick={(e) =>
-                                                            showDeleteConfirmationDialog(client.numeroIdentificacion, e)
+                                                            showDeleteConfirmationDialog(client._id!, e)
                                                         }
                                                         className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                                     >
@@ -421,7 +448,7 @@ export const ClientesTable = ({ clientes, onUpdate }: ClientesTableProps) => {
                                     <button
                                         key={index}
                                         onClick={() => handlePageChange(page as number)}
-                                        className={`px-3 py-1 rounded text-sm ${currentPage === page ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                                        className={`px-3 py-1 rounded text-sm ${currentPage === page ? 'bg-green-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
                                     >
                                         {page}
                                     </button>

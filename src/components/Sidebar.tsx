@@ -23,13 +23,13 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         label: 'Clientes',
         to: '/clientes'
     }, {
-        icon: FileText,
-        label: 'Facturas',
-        to: '/facturas'
-    }, {
         icon: Package,
         label: 'Productos',
         to: '/productos'
+    }, {
+        icon: FileText,
+        label: 'Facturas',
+        to: '/facturas'
     }];
     // return (
     //     <>

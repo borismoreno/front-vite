@@ -13,6 +13,7 @@ import {
     Briefcase,
     ChevronDown,
     Check,
+    Text
 } from 'lucide-react'
 import type { ICliente } from '../../types/cliente';
 import { getTiposIdentificacion } from '../../api/general';
@@ -198,7 +199,7 @@ export function CreateClientForm({
                         {/* Tipo de identificación field */}
                         <div className="relative" ref={clientDropdownRef}>
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <User className="h-5 w-5 text-gray-400" />
+                                <Text className="h-5 w-5 text-gray-400" />
                             </div>
                             <button
                                 type="button"
@@ -301,7 +302,7 @@ export function CreateClientForm({
                             className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
                         >
                             <Save className="h-5 w-5 mr-2" />
-                            {isEditing ? 'ACTUALIZAR CLIENTE' : 'GUARDAR CLIENTE'}
+                            {isEditing ? 'Actualizar Cliente' : 'Guardar Cliente'}
                         </button>
                     </div>
                 </form>
