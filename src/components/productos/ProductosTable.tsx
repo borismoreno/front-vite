@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { IProducto } from "../../types/producto"
-import { X, AlertTriangle, Filter, Search, PlusCircle, MoreHorizontal, Edit, Trash2, ChevronLeft, ChevronRight, ChevronDown, Tag, PackageSearch, DiamondPercent, DollarSign } from "lucide-react";
+import { X, AlertTriangle, Search, PlusCircle, MoreHorizontal, Edit, Trash2, ChevronLeft, ChevronRight, ChevronDown, Tag, PackageSearch, DiamondPercent, DollarSign } from "lucide-react";
 import { CreateProductoForm } from "./CreateProductoForm";
 import { createProducto, deleteProduct, updateProducto } from "../../api/producto";
 import { toast } from "react-toastify";

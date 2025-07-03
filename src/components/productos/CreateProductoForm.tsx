@@ -5,7 +5,7 @@ import * as yup from "yup";
 import type { IProducto } from "../../types/producto"
 import type { ITipoProducto, ITarifaIva } from "../../types/general"
 import { getTarifasIva, getTiposProducto } from "../../api/general"
-import { ArrowLeft, Check, ChevronDown, DollarSign, FileText, Save, User, Tag, Bookmark, PackageSearch, DiamondPercent } from "lucide-react";
+import { ArrowLeft, Check, ChevronDown, DollarSign, FileText, Save, Tag, Bookmark, PackageSearch, DiamondPercent } from "lucide-react";
 
 const schema = yup.object({
     descripcion: yup.string().required("La descripción es obligatoria"),
