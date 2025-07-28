@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { CreateClientForm } from "../clientes/CreateClienteForm";
 import { CreateProductoForm } from "../productos/CreateProductoForm";
 import { Stepper } from "../Stepper";
+import { simularEnvio } from "../../api/comprobantes";
 
 const socketUrl = import.meta.env.VITE_SOCKET_URL;
 
@@ -392,11 +393,12 @@ export const NuevaFacturaForm = () => {
         //     : 'offline-connection-id';
 
         console.log('connectionId', connectionId);
-        await fetch('https://7i11fsa5d8.execute-api.us-east-1.amazonaws.com/dev/simular-emision', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ connectionId }),
-        });
+        // await fetch('https://7i11fsa5d8.execute-api.us-east-1.amazonaws.com/dev/simular-emision', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify({ connectionId }),
+        // });
+        await simularEnvio(connectionId!);
     };
 
     return <div className="flex flex-col w-full max-w-6xl mx-auto items-center justify-center p-2">

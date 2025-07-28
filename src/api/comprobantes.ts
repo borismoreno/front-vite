@@ -7,6 +7,6 @@ export const getFacturasEmitidas = async (searchType: SearchType, startDate?: Da
     return await fetchSinToken(`comprobante/facturas-emitidas?searchType=${searchType}${startDate ? `&startDate=${startDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`);
 }
 
-export const simularEnvio = (clienteId: string): void => {
-    fetchSinToken(`comprobante/simular-emision?clientId=${clienteId}`);
+export const simularEnvio = async (clienteId: string): Promise<any> => {
+    return await fetchSinToken(`comprobante/simular-emision`, { "connectionId": clienteId }, 'POST');
 }
