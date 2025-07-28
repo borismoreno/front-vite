@@ -31,6 +31,7 @@ export const NuevaFacturaForm = () => {
 
     const [currentStep, setCurrentStep] = useState(-1);
     const [socketConnected, setSocketConnected] = useState(false);
+    const [connectionId, setConnectionId] = useState<string | undefined>();
 
 
     const [isCreateClientModalOpen, setIsCreateClientModalOpen] = useState<boolean>(false);
@@ -338,6 +339,7 @@ export const NuevaFacturaForm = () => {
 
         ws.onopen = () => {
             console.log('✅ Conectado al WebSocket');
+            ws.send(JSON.stringify({ action: 'init' }));
             setSocketConnected(true);
         };
 
@@ -354,8 +356,9 @@ export const NuevaFacturaForm = () => {
                 console.log(event.data);
 
                 // Primer mensaje desde serverless-offline contiene el connectionId
-                if (event.data.includes('connectionId')) {
-                    const id = JSON.parse(event.data).connectionId;
+                if (data.type === 'connectionId') {
+                    const id = data.message;
+                    setConnectionId(id);
                     console.log('🔗 connectionId:', id);
                 }
             } catch (err) {
@@ -384,9 +387,9 @@ export const NuevaFacturaForm = () => {
         }
 
         setCurrentStep(0);
-        const connectionId = socket.url.includes('/@connections/')
-            ? socket.url.split('/@connections/')[1]
-            : 'offline-connection-id';
+        // const connectionId = socket.url.includes('/@connections/')
+        //     ? socket.url.split('/@connections/')[1]
+        //     : 'offline-connection-id';
 
         console.log('connectionId', connectionId);
         await fetch('https://7i11fsa5d8.execute-api.us-east-1.amazonaws.com/dev/simular-emision', {
