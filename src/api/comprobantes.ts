@@ -6,3 +6,7 @@ export type SearchType = 'currentMonth' | 'previousMonth' | 'currentYear' | 'pre
 export const getFacturasEmitidas = async (searchType: SearchType, startDate?: Date, endDate?: Date): Promise<IFacturaEmitida[]> => {
     return await fetchSinToken(`comprobante/facturas-emitidas?searchType=${searchType}${startDate ? `&startDate=${startDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`);
 }
+
+export const simularEnvio = (clienteId: string): void => {
+    fetchSinToken(`comprobante/simular-emision?clientId=${clienteId}`);
+}

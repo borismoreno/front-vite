@@ -7,6 +7,16 @@ import { getProductos } from "../../api/producto";
 import { toast } from "react-toastify";
 import { CreateClientForm } from "../clientes/CreateClienteForm";
 import { CreateProductoForm } from "../productos/CreateProductoForm";
+import { Stepper } from "../Stepper";
+
+const socketUrl = import.meta.env.VITE_SOCKET_URL;
+
+const mapMensajeToStep = (msg: string | string[]) => {
+    if (msg.includes('Firmando')) return 0;
+    if (msg.includes('Enviando')) return 1;
+    if (msg.includes('Validación')) return 2;
+    return -1;
+};
 
 interface InvoiceItem {
     description: string
@@ -18,6 +28,11 @@ interface InvoiceItem {
 }
 
 export const NuevaFacturaForm = () => {
+
+    const [currentStep, setCurrentStep] = useState(-1);
+    const [socketConnected, setSocketConnected] = useState(false);
+
+
     const [isCreateClientModalOpen, setIsCreateClientModalOpen] = useState<boolean>(false);
     const [isClientDropdownOpen, setIsClientDropdownOpen] = useState<boolean>(false);
     const [_, setLoading] = useState<boolean>(false);
@@ -315,6 +330,71 @@ export const NuevaFacturaForm = () => {
             document.removeEventListener('click', handleClickOutside)
         }
     }, [activeProductSearchIndex])
+
+    const socketRef = useRef<WebSocket | null>(null);
+
+    useEffect(() => {
+        const ws = new WebSocket(socketUrl);
+
+        ws.onopen = () => {
+            console.log('✅ Conectado al WebSocket');
+            setSocketConnected(true);
+        };
+
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'estadoFactura') {
+                    const msg = data.message;
+                    const step = mapMensajeToStep(msg);
+                    if (step !== -1) setCurrentStep(step);
+                }
+
+                console.log(event.data);
+
+                // Primer mensaje desde serverless-offline contiene el connectionId
+                if (event.data.includes('connectionId')) {
+                    const id = JSON.parse(event.data).connectionId;
+                    console.log('🔗 connectionId:', id);
+                }
+            } catch (err) {
+                console.error('Error procesando mensaje:', err);
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('🔌 WebSocket cerrado');
+            setSocketConnected(false);
+        };
+
+        // setSocket(ws);
+        socketRef.current = ws;
+
+        return () => {
+            ws.close();
+        };
+    }, []);
+
+    const emitirFactura = async () => {
+        const socket = socketRef.current;
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            alert('Conexión WebSocket no establecida aún.');
+            return;
+        }
+
+        setCurrentStep(0);
+        const connectionId = socket.url.includes('/@connections/')
+            ? socket.url.split('/@connections/')[1]
+            : 'offline-connection-id';
+
+        console.log('connectionId', connectionId);
+        await fetch('https://7i11fsa5d8.execute-api.us-east-1.amazonaws.com/dev/simular-emision', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ connectionId }),
+        });
+    };
 
     return <div className="flex flex-col w-full max-w-6xl mx-auto items-center justify-center p-2">
         {/* Create Client Modal */}
@@ -746,6 +826,18 @@ export const NuevaFacturaForm = () => {
                                     <span>${calculateTotal().toFixed(2)}</span>
                                 </div>
                             </div>
+                        </div>
+                        <div>
+                            <button
+                                type="button"
+                                onClick={emitirFactura}
+                                disabled={!socketConnected}
+                                className="mt-2 flex items-center text-green-600 hover:text-green-800"
+                            >
+                                <PlusCircle className="h-4 w-4 mr-1" />
+                                Emitir
+                            </button>
+                            <Stepper currentStep={currentStep} />
                         </div>
                     </div>
                 </div>
