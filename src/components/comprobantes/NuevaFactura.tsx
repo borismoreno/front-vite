@@ -9,8 +9,8 @@ import { CreateClientForm } from "../clientes/CreateClienteForm";
 import { CreateProductoForm } from "../productos/CreateProductoForm";
 import { Stepper } from "../Stepper";
 import { simularEnvio } from "../../api/comprobantes";
+import { useWebSocket } from "../../context/WebSocketContext";
 
-const socketUrl = import.meta.env.VITE_SOCKET_URL;
 
 const mapMensajeToStep = (msg: string | string[]) => {
     if (msg.includes('Firmando')) return 0;
@@ -31,8 +31,7 @@ interface InvoiceItem {
 export const NuevaFacturaForm = () => {
 
     const [currentStep, setCurrentStep] = useState(-1);
-    const [socketConnected, setSocketConnected] = useState(false);
-    const [connectionId, setConnectionId] = useState<string | undefined>();
+    const { socket, connectionId, addListener, removeListener } = useWebSocket()
 
 
     const [isCreateClientModalOpen, setIsCreateClientModalOpen] = useState<boolean>(false);
@@ -43,7 +42,6 @@ export const NuevaFacturaForm = () => {
     const clientDropdownRef = useRef<HTMLDivElement>(null);
     const issueDatePickerRef = useRef<HTMLDivElement>(null);
     const issueDateInputRef = useRef<HTMLInputElement>(null);
-    // const productDropdownRef = useRef<HTMLDivElement>(null);
     const productDropdownRefs = useRef<{
         [key: number]: HTMLDivElement | null
     }>({})
@@ -333,72 +331,29 @@ export const NuevaFacturaForm = () => {
         }
     }, [activeProductSearchIndex])
 
-    const socketRef = useRef<WebSocket | null>(null);
-
     useEffect(() => {
-        const ws = new WebSocket(socketUrl);
-
-        ws.onopen = () => {
-            console.log('✅ Conectado al WebSocket');
-            ws.send(JSON.stringify({ action: 'init' }));
-            setSocketConnected(true);
-        };
-
-        ws.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-
-                if (data.type === 'estadoFactura') {
-                    const msg = data.message;
-                    const step = mapMensajeToStep(msg);
-                    if (step !== -1) setCurrentStep(step);
-                }
-
-                console.log(event.data);
-
-                // Primer mensaje desde serverless-offline contiene el connectionId
-                if (data.type === 'connectionId') {
-                    const id = data.message;
-                    setConnectionId(id);
-                    console.log('🔗 connectionId:', id);
-                }
-            } catch (err) {
-                console.error('Error procesando mensaje:', err);
+        const handler = (data: any) => {
+            if (data.type === 'estadoFactura') {
+                const msg = data.message;
+                console.log(msg);
+                const step = mapMensajeToStep(msg);
+                if (step !== -1) setCurrentStep(step);
             }
         };
 
-        ws.onclose = () => {
-            console.log('🔌 WebSocket cerrado');
-            setSocketConnected(false);
-        };
-
-        // setSocket(ws);
-        socketRef.current = ws;
-
-        return () => {
-            ws.close();
-        };
-    }, []);
+        addListener(handler);
+        return () => removeListener(handler);
+    }, [addListener, removeListener]);
 
     const emitirFactura = async () => {
-        const socket = socketRef.current;
+        // const socket = socketRef.current;
         if (!socket || socket.readyState !== WebSocket.OPEN) {
             alert('Conexión WebSocket no establecida aún.');
             return;
         }
 
         setCurrentStep(0);
-        // const connectionId = socket.url.includes('/@connections/')
-        //     ? socket.url.split('/@connections/')[1]
-        //     : 'offline-connection-id';
-
-        console.log('connectionId', connectionId);
-        // await fetch('https://7i11fsa5d8.execute-api.us-east-1.amazonaws.com/dev/simular-emision', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ connectionId }),
-        // });
-        await simularEnvio(connectionId!);
+        await simularEnvio();
     };
 
     return <div className="flex flex-col w-full max-w-6xl mx-auto items-center justify-center p-2">
@@ -836,7 +791,7 @@ export const NuevaFacturaForm = () => {
                             <button
                                 type="button"
                                 onClick={emitirFactura}
-                                disabled={!socketConnected}
+                                disabled={!connectionId}
                                 className="mt-2 flex items-center text-green-600 hover:text-green-800"
                             >
                                 <PlusCircle className="h-4 w-4 mr-1" />
