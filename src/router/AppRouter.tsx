@@ -10,12 +10,13 @@ import { FacturasScreen } from '../pages/comprobantes/FacturasScreen'
 import { Clientes } from '../pages/admin/Clientes'
 import { Productos } from '../pages/admin/Productos'
 import { Settings } from '../pages/admin/Settings'
+import { WebSocketProvider } from '../context/WebSocketContext'
 
 export const AppRouter = () => {
     return (<BrowserRouter>
         <Routes>
             <Route element={<ProtectedRoute />}>
-                <Route element={<MainLayout />} >
+                <Route element={<WebSocketProvider><MainLayout /></WebSocketProvider>} >
                     <Route path="/" element={<App />} />
                     <Route path="/facturas" element={<FacturasScreen />} />
                     <Route path="/clientes" element={<Clientes />} />
