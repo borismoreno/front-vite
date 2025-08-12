@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { Check, ChevronDown, DollarSign, Percent, PlusCircle, Search, Trash2, UserPlus, Users, X, Save, ArrowLeft, Info } from "lucide-react";
+import { Check, ChevronDown, DollarSign, Percent, PlusCircle, Search, Trash2, UserPlus, Users, X, Save, ArrowLeft } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { ICliente } from "../../types/cliente";
 import type { IProducto } from "../../types/producto";
@@ -233,9 +233,10 @@ export const NuevaFacturaForm = ({ onCancel }: INuevaFacturaFormProps) => {
             // Calculate amount after discount but before tax
             const amountAfterDiscount = subtotal - discountAmount
             // Apply tax if applicable
-            const taxAmount = amountAfterDiscount * (item.taxRate / 100)
+            // const taxAmount = amountAfterDiscount * (item.taxRate / 100)
             // Final amount includes tax
-            newItems[index].amount = amountAfterDiscount + taxAmount
+            newItems[index].amount = amountAfterDiscount
+            // newItems[index].amount = amountAfterDiscount + taxAmount
         }
         setItems(newItems)
     }
@@ -394,9 +395,10 @@ export const NuevaFacturaForm = ({ onCancel }: INuevaFacturaFormProps) => {
         // Calculate amount after discount but before tax
         const amountAfterDiscount = subtotal - discountAmount
         // Apply tax if applicable
-        const taxAmount = amountAfterDiscount * (newItems[index].taxRate / 100)
+        // const taxAmount = amountAfterDiscount * (newItems[index].taxRate / 100)
         // Final amount includes tax
-        newItems[index].amount = amountAfterDiscount + taxAmount
+        newItems[index].amount = amountAfterDiscount
+        // newItems[index].amount = amountAfterDiscount + taxAmount
         setItems(newItems)
         setActiveProductSearchIndex(null)
         setProductSearchQuery('')
@@ -925,7 +927,7 @@ export const NuevaFacturaForm = ({ onCancel }: INuevaFacturaFormProps) => {
                                                     </div>
                                                     <input
                                                         type="number"
-                                                        value={item.amount}
+                                                        value={item.amount.toFixed(2)}
                                                         readOnly
                                                         className="w-full pl-7 pr-2 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none"
                                                     />
@@ -992,14 +994,14 @@ export const NuevaFacturaForm = ({ onCancel }: INuevaFacturaFormProps) => {
                                             {/* Responsive grid layout */}
                                             <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-12 md:gap-2 md:items-start">
                                                 {/* Info field */}
-                                                <div className="md:col-span-5">
+                                                <div className="md:col-span-6">
                                                     <label className="block text-sm font-medium text-gray-700 mb-1 md:hidden">
                                                         Dato Adicional
                                                     </label>
                                                     <div className="relative">
-                                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                        {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                                             <Info className="h-4 w-4 text-gray-400" />
-                                                        </div>
+                                                        </div> */}
                                                         <input
                                                             type="text"
                                                             placeholder=""
@@ -1007,12 +1009,12 @@ export const NuevaFacturaForm = ({ onCancel }: INuevaFacturaFormProps) => {
                                                             onChange={(e) =>
                                                                 updateAdditionalInfo(index, 'info', e.target.value)
                                                             }
-                                                            className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                            className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                                                         />
                                                     </div>
                                                 </div>
                                                 {/* Value field */}
-                                                <div className="md:col-span-6">
+                                                <div className="md:col-span-5">
                                                     <label className="block text-sm font-medium text-gray-700 mb-1 md:hidden">
                                                         Valor
                                                     </label>
@@ -1082,17 +1084,26 @@ export const NuevaFacturaForm = ({ onCancel }: INuevaFacturaFormProps) => {
                                     </div>
                                 </div>
                             </div>
-                            <button
-                                type="submit"
-                                className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
-                            >
-                                <Save className="h-5 w-5 mr-2" />
-                                Emitir Factura
-                            </button>
+                            <div className='w-full flex items-center justify-evenly'>
+                                <button
+                                    onClick={onCancel}
+                                    className="inline-flex items-center text-sm text-gray-600 hover:text-gray-800"
+                                >
+                                    <ArrowLeft className="mr-1 h-4 w-4" />
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="w-auto py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
+                                >
+                                    <Save className="h-5 w-5 mr-2" />
+                                    Emitir Factura
+                                </button>
+                            </div>
                         </div>
                     </form>
                     {/* Cancel button */}
-                    <div className="mt-8 text-left">
+                    {/* <div className="mt-8 text-left">
                         <button
                             onClick={onCancel}
                             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-800"
@@ -1100,7 +1111,7 @@ export const NuevaFacturaForm = ({ onCancel }: INuevaFacturaFormProps) => {
                             <ArrowLeft className="mr-1 h-4 w-4" />
                             Cancelar
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>

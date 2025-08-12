@@ -339,37 +339,43 @@ export const FacturasEmitidasTable = ({ facturasEmitidas, onDateChanged }: IFact
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {currentFacturas.map((factura) => <tr key={factura.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {factura.numeroFactura}
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        <img className="h-10 w-10 rounded-full flex-shrink-0" src={`https://ui-avatars.com/api/?name=${encodeURIComponent(factura.razonSocialCliente)}&background=random`} alt={factura.razonSocialCliente} />
-                                        <div className="ml-3">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {factura.razonSocialCliente}
-                                            </div>
-                                            <div className="text-xs text-gray-500">
-                                                {factura.identificacionCliente}
+                            {currentFacturas.map((factura) =>
+                                <tr key={factura.id} className="hover:bg-gray-50">
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
+                                        <button
+                                            onClick={() => console.log('Click' + factura.id)}
+                                            className="hover:underline focus:outline-none"
+                                        >
+                                            {factura.numeroFactura}
+                                        </button>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center">
+                                            <img className="h-10 w-10 rounded-full flex-shrink-0" src={`https://ui-avatars.com/api/?name=${encodeURIComponent(factura.razonSocialCliente)}&background=random`} alt={factura.razonSocialCliente} />
+                                            <div className="ml-3">
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    {factura.razonSocialCliente}
+                                                </div>
+                                                <div className="text-xs text-gray-500">
+                                                    {factura.identificacionCliente}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {factura.fechaEmision}
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(factura.estadoComprobante)}`}
-                                    >
-                                        {factura.estadoComprobante}
-                                    </span>
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {`$${factura.importeTotal.toFixed(2)}`}
-                                </td>
-                            </tr>)}
+                                    </td>
+                                    <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {factura.fechaEmision}
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(factura.estadoComprobante)}`}
+                                        >
+                                            {factura.estadoComprobante}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        {`$${factura.importeTotal.toFixed(2)}`}
+                                    </td>
+                                </tr>)}
                         </tbody>
                     </table>
                 </div>

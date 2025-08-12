@@ -85,7 +85,7 @@ export const ProductosTable = ({ productos, onUpdate }: IProductosTableProps) =>
 
     // Check if a product is in the last two rows
     const isInLastTwoRows = (index: number) => {
-        return index >= filteredProducts.length - 2
+        return index >= currentProducts.length - 2
     }
 
     // Check if a product is in the first row
@@ -363,7 +363,7 @@ export const ProductosTable = ({ productos, onUpdate }: IProductosTableProps) =>
                                                         </button>
                                                         {activeDropdown === product.id && (
                                                             <div
-                                                                className={`absolute ${!isInFirstRow(index) && isInLastTwoRows(index) ? 'bottom-full' : `top-full ${isInFirstRow(index) ? 'mt-[-15px]' : ''}`} right-0 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200`}
+                                                                className={`absolute ${!isInFirstRow(index) && isInLastTwoRows(index) ? 'bottom-full' : `top-full ${isInFirstRow(index) ? 'mt-[-15px]' : 'mt-2'}`} right-0 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200`}
                                                             >
                                                                 <div className="py-1">
                                                                     <button
