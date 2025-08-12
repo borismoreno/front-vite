@@ -200,8 +200,7 @@ export const FacturasEmitidasTable = ({ facturasEmitidas, onDateChanged }: IFact
             >
                 <X className="h-5 w-5" />
             </button>
-            <NuevaFacturaForm
-            />
+            <NuevaFacturaForm onCancel={handleCancelInvoice} />
         </div> : (<>
             <div className="mb-6">
                 <h1 className="text-2xl font-semibold text-gray-900">Facturas</h1>

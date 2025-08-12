@@ -104,7 +104,7 @@ export function Loading({
     if (variant === 'fullscreen') {
         return (
             <div
-                className={`fixed inset-0 z-50 flex items-center justify-center ${overlay ? 'bg-gray-900/50' : ''} ${className}`}
+                className={`fixed inset-0 z-70 flex items-center justify-center ${overlay ? 'bg-gray-900/50' : ''} ${className}`}
             >
                 <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center space-y-4">
                     {renderSpinner()}

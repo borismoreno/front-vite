@@ -18,3 +18,8 @@ export interface ITarifaIva {
     codigo: string;
     porcentaje: string;
 }
+
+export interface ITipoFormaPago {
+    codigo: string;
+    formaPago: string;
+}
